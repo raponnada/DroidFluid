@@ -35,7 +35,7 @@ LOCAL_CFLAGS += -std=c++11
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE    := ofswitch.so
+LOCAL_MODULE    := ofswitch
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_SRC_FILES := AndroidSwitch.cc \
                    switch/datapath.cc \
