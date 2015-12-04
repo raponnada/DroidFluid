@@ -1,0 +1,71 @@
+apply plugin: 'com.android.model.application'
+
+def ndkBuild = '/home/cuong/Android/Ndk/ndk-build'
+
+task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
+    commandLine "$ndkBuild", '-C', file('src/main').absolutePath
+}
+
+task cleanNative(type: Exec, description: 'Clean JNI object files') {
+    commandLine "$ndkBuild", '-C', file('src/main').absolutePath, 'clean'
+}
+
+tasks.clean.dependsOn cleanNative
+
+tasks.all {
+    task ->
+        if (task.name.startsWith('compile') && task.name.contains('MainC')) {
+            task.enabled = false
+        } else if (task.name.startsWith('link')) {
+            task.enabled = false
+        } else if (task.name.endsWith('SharedLibrary')) {
+            task.dependsOn buildNative
+        }
+}
+
+model {
+    android {
+        compileSdkVersion = 23
+        buildToolsVersion = "23.0.2"
+
+        defaultConfig.with {
+            applicationId = "edu.umkc.droidfluid"
+            minSdkVersion.apiLevel = 9
+            targetSdkVersion.apiLevel = 17
+        }
+    }
+
+    android.ndk {
+        // Toggle as need
+        //stl = "gnustl_shared"
+        moduleName = "ofcontroller"
+
+        cppFlags += "-std=c++11"
+
+        cppFlags += "-I${file("src/main/prebuilt/libfluid_msg/")}".toString()
+        cppFlags += "-I${file("src/main/prebuilt/libfluid_base/")}".toString()
+        cppFlags += "-I${file("src/main/prebuilt/libevent/include/")}".toString()
+        cppFlags += "-I${file("/home/cuong/Android/Ndk/external/libpcap/")}".toString()
+
+        ldLibs += "log"
+    }
+
+    android.sources{
+        main.jniLibs {
+            source {
+                srcDir 'src/main/libs'
+            }
+        }
+    }
+
+    android.buildTypes {
+        release {
+            minifyEnabled = false
+            proguardFiles += file("proguard-rules.pro")
+        }
+    }
+}
+
+
+dependencies {
+}

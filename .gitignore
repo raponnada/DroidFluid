@@ -1,0 +1,16 @@
+.idea
+*.iml
+
+.DS_Store
+
+.gradle
+
+local.properties
+
+app/build
+app/src/main/prebuilt/libpcap
+app/src/main/prebuilt/libevent
+app/src/main/prebuilt/libfluid_msg
+app/src/main/prebuilt/libfluid_base
+app/src/main/obj
+app/src/main/libs
