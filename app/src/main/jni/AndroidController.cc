@@ -38,7 +38,7 @@ public:
 };
 
 extern "C" void
-Java_com_cpqd_ofcontroller_Controller_startController(JNIEnv*  env,
+Java_edu_umkc_ofcontroller_Controller_startController(JNIEnv*  env,
                                       jobject  self,
                                       jint port,
                                       jint nthreads) {

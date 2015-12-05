@@ -1,4 +1,4 @@
-package com.cpqd.ofcontroller;
+package edu.umkc.ofcontroller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
