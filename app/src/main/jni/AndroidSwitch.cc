@@ -100,16 +100,4 @@ int main( int argc, char* argv[])
 
     delete sw;
     return 0;
-//    char errbuf[PCAP_ERRBUF_SIZE];
-//
-//    pcap_t *descr = pcap_open_live("wlan0", BUFSIZ, -1, -1, errbuf);
-//
-//    if (descr == NULL) {
-//        fprintf(stdout, "Error: %s", errbuf);
-//        return 1;
-//    }
-//
-//    pcap_loop(descr, -1, packet_handler_callback, NULL);
-//
-//    return 0;
 }

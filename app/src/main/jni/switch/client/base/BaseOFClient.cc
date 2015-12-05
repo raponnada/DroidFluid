@@ -38,7 +38,7 @@ void* BaseOFClient::try_connect(void *arg){
 
     /* Create the TCP socket */
     if ((sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
-        fprintf(stderr, "Error creating socket");
+        fprintf(stdout, "Error creating socket");
         return NULL;
     }
     memset(&echoserver, 0, sizeof(echoserver));
@@ -46,7 +46,8 @@ void* BaseOFClient::try_connect(void *arg){
     echoserver.sin_addr.s_addr = inet_addr(boc->address.c_str());
     echoserver.sin_port = htons(boc->port);
     while (connect(sock, (struct sockaddr *) &echoserver, sizeof(echoserver)) < 0) {
-        fprintf(stderr, "Retrying in 5 seconds...\n");
+        fprintf(stdout, "Retrying in 5 seconds...\n");
+        fflush(stdout);
         sleep(5);
     }
     BaseOFConnection* c = new BaseOFConnection(0,

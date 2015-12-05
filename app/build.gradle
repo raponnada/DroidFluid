@@ -22,7 +22,7 @@ tasks.all {
             task.dependsOn buildNative
         } else if (task.name == 'buildNative') {
             task.doLast {
-                print "Rename ofswitch --> libofswitch.so"
+                print "Rename ofswitch => libofswitch.so"
 
                 copy {
                     from('src/main/libs/armeabi/') {
