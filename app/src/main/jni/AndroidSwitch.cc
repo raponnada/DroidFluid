@@ -53,14 +53,18 @@ u_int16_t handle_ethernet(u_char *args, const struct pcap_pkthdr* pkthdr, const 
     struct ether_header* etherHdr = (struct ether_header*) packet;
 
     if (ntohs(etherHdr->ether_type) == ETHERTYPE_IP) {
-        fprintf(stdout, "Change ToS and destination IP address\n");
+        fprintf(stdout, "Change ToS and source IP address\n");
         fprintf(stdout, "Original packet: ");
         show_ip_packet_info(packet);
 
         struct ip* ipPtr = (struct ip*)(packet + sizeof(struct ether_header));
 
         int orgSrcIp = inet_network(inet_ntoa(ipPtr->ip_src));
-        uint32_t genSrcIp = (orgSrcIp & 0xFFFFFF00) | 28;
+
+        time_t now_t = time(0);
+        struct tm * now = localtime(&now_t);
+
+        uint32_t genSrcIp = (orgSrcIp & 0xFFFFFF00) | now->tm_min;
 
         struct in_addr addr;
         addr.s_addr = htonl(genSrcIp);
@@ -85,18 +89,27 @@ void packet_handler_callback(u_char *args, const struct pcap_pkthdr* pkthdr, con
 
 int main( int argc, char* argv[])
 {
-    //Switch *sw = new Switch(0, "127.0.0.1", 6653);
+    std::vector<std::string> ports;
+    ports.push_back("wlan0");
 
-    char errbuf[PCAP_ERRBUF_SIZE];
+    Switch *sw = new Switch(0, "127.0.0.1", 6653, ports);
 
-    pcap_t *descr = pcap_open_live("wlan0", BUFSIZ, -1, -1, errbuf);
+    sw->start();
+    wait_for_sigint();
+    sw->stop();
 
-    if (descr == NULL) {
-        fprintf(stdout, "Error: %s", errbuf);
-        return 1;
-    }
-
-    pcap_loop(descr, -1, packet_handler_callback, NULL);
-
+    delete sw;
     return 0;
+//    char errbuf[PCAP_ERRBUF_SIZE];
+//
+//    pcap_t *descr = pcap_open_live("wlan0", BUFSIZ, -1, -1, errbuf);
+//
+//    if (descr == NULL) {
+//        fprintf(stdout, "Error: %s", errbuf);
+//        return 1;
+//    }
+//
+//    pcap_loop(descr, -1, packet_handler_callback, NULL);
+//
+//    return 0;
 }

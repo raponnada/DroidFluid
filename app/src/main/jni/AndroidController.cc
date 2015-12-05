@@ -42,8 +42,6 @@ Java_com_cpqd_ofcontroller_Controller_startController(JNIEnv*  env,
                                       jobject  self,
                                       jint port,
                                       jint nthreads) {
-//	Switch *sw = new Switch(0, "127.0.0.1", 6653);
-//	sw->start(true);
     AndroidController ctrl("0.0.0.0", port, nthreads);
     MultiLearningSwitch app;
     ctrl.register_for_event(&app, EVENT_PACKET_IN);

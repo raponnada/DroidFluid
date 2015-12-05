@@ -35,10 +35,10 @@ void wait_for_sigint() {
    sigaction(SIGINT, &sa, NULL);
 
    while (1) {
-
        if (quit) {
-       	break;
+		   break;
        }
+
        sleep(1000);
    }
 }
@@ -54,7 +54,7 @@ class Switch: public OFClient{
 			for(std::vector<SwPort*>::iterator it = this->dp->ports.begin();
 		  		it != this->dp->ports.end(); ++it){				  					  					  					  	
 				  	delete (*it);				  	  								
-			}	
+			}
 			delete dp;
 			delete [] this->threads; 
 		}

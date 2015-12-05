@@ -13,9 +13,23 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+class Controller implements Runnable
+{
+    static {
+        System.loadLibrary("gnustl_shared");
+        System.loadLibrary("ofcontroller");
+    }
+
+    public void run() {
+        startController(6653, 4);
+    }
+
+    native void startController(int port, int nthreads);
+}
+
 public class OFController extends Activity
 {
-	private TextView tv;
+	private TextView switchTextView;
     private Handler logUpdaterHandler;
 	final private int logUpdaterInterval = 1000;
 
@@ -25,7 +39,7 @@ public class OFController extends Activity
     private Runnable logUpdater = new Runnable() {
 		@Override
 		public void run() {
-			updateLog();
+			updateSwitchLog();
 			logUpdaterHandler.postDelayed(logUpdater, logUpdaterInterval);
 		}
 	};
@@ -35,16 +49,16 @@ public class OFController extends Activity
     {
 		super.onCreate(savedInstanceState);
         try {
-            process = Runtime.getRuntime().exec(new String[]{"su", "-c", getFilesDir().getParent() + "/lib/ofswitch"});
+            process = Runtime.getRuntime().exec(new String[]{"su", "-c", getFilesDir().getParent() + "/lib/libofswitch.so"});
 
             bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-            tv = new TextView(this);
-            ScrollView sv = new ScrollView(this);
-            sv.addView(tv);
+            switchTextView = new TextView(this);
+            final ScrollView sv = new ScrollView(this);
+            sv.addView(switchTextView);
             sv.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-            tv.setMovementMethod(new ScrollingMovementMethod());
+            switchTextView.setMovementMethod(new ScrollingMovementMethod());
             setContentView(sv);
 
             logUpdaterHandler = new Handler();
@@ -54,7 +68,7 @@ public class OFController extends Activity
         }
     }
 
-	void updateLog()
+	void updateSwitchLog()
     {
         try {
 			final StringBuilder log = new StringBuilder();
@@ -68,10 +82,10 @@ public class OFController extends Activity
             if (!log.toString().isEmpty()) {
                 Log.i("DroidFluid", "Native message: " + log.toString());
 
-                tv.setText(log.toString());
+                switchTextView.setText(log.toString());
             }
 		} catch (IOException e) {
-            tv.setText(e.getMessage());
+            switchTextView.setText(e.getMessage());
 		}
     }
 }
