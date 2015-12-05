@@ -85,8 +85,7 @@ void BaseOFClient::free_data(void* data) {
 
 void BaseOFClient::stop() {
     int status;
-    if ((status = pthread_kill(this->conn_t, SIGUSR1)) != 0)
-    {
+    if ((status = pthread_kill(this->conn_t, SIGUSR1)) != 0) {
         printf("Error cancelling thread %d, error = %d (%s)", this->conn_t, status, strerror(status));
     }
     evloop->stop();
