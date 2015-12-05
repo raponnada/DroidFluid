@@ -2,8 +2,10 @@
 
 #include <android/log.h>
 #include <jni.h>
+#include <pthread.h>
 
 #include "Controller.hh"
+#include "arp-scan.cc"
 #include "msg/MsgApps.hh"
 
 class AndroidController : public Controller
@@ -42,12 +44,14 @@ Java_edu_umkc_ofcontroller_Controller_startController(JNIEnv*  env,
                                       jobject  self,
                                       jint port,
                                       jint nthreads) {
+
     AndroidController ctrl("0.0.0.0", port, nthreads);
-    MultiLearningSwitch app;
-    ctrl.register_for_event(&app, EVENT_PACKET_IN);
-    ctrl.register_for_event(&app, EVENT_SWITCH_UP);
-    ctrl.register_for_event(&app, EVENT_SWITCH_DOWN);
+    //MultiLearningSwitch app;
+    //ctrl.register_for_event(&app, EVENT_PACKET_IN);
+    //ctrl.register_for_event(&app, EVENT_SWITCH_UP);
+    //ctrl.register_for_event(&app, EVENT_SWITCH_DOWN);
     __android_log_print(ANDROID_LOG_DEBUG, "OFCONTROLLER", "Server listening at port %d\n", port);
     ctrl.start(true);
     __android_log_print(ANDROID_LOG_DEBUG, "OFCONTROLLER", "Server stopped");
+
 }
