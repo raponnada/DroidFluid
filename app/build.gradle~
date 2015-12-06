@@ -1,6 +1,6 @@
 apply plugin: 'com.android.model.application'
 
-def ndkBuild = '/home/spykid/Android/Ndk/ndk-build'
+def ndkBuild = '/home/cuong/Android/Ndk/ndk-build'
 
 task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
     commandLine "$ndkBuild", '-C', file('src/main').absolutePath
@@ -14,14 +14,22 @@ tasks.clean.dependsOn cleanNative
 
 tasks.buildNative.doLast {
     copy {
-        from('src/main/libs/') {
-            exclude '**/*.so'
+        from('src/main/libs/armeabi/') {
+            exclude '*.so'
         }
-        into('src/main/libs/')
-        rename('(.+)', 'lib$1.so')
+        into('src/main/libs/armeabi/')
+        rename("ofswitch", "libofswitch.so")
     }
 
-    delete fileTree('src/main/libs/').exclude('**/*.so')
+    copy {
+        from('src/main/libs/armeabi-v7a/') {
+            exclude '*.so'
+        }
+        into('src/main/libs/armeabi-v7a/')
+        rename("ofswitch", "libofswitch.so")
+    }
+
+    delete files('src/main/libs/armeabi/ofswitch', 'src/main/libs/armeabi-v7a/ofswitch')
 }
 
 tasks.all {
@@ -57,7 +65,7 @@ model {
         cppFlags += "-I${file("src/main/prebuilt/libfluid_msg/")}".toString()
         cppFlags += "-I${file("src/main/prebuilt/libfluid_base/")}".toString()
         cppFlags += "-I${file("src/main/prebuilt/libevent/include/")}".toString()
-        cppFlags += "-I${file("/home/spykid/Android/Ndk/external/libpcap/")}".toString()
+        cppFlags += "-I${file("/home/cuong/Android/Ndk/external/libpcap/")}".toString()
 
         ldLibs += "log"
     }

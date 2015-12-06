@@ -31,7 +31,6 @@ LOCAL_SRC_FILES := AndroidController.cc
 LOCAL_STATIC_LIBRARIES := libfluid_base libfluid_msg libevent libevent_pthreads
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS += -std=c++11
-
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
