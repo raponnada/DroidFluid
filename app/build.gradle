@@ -1,6 +1,7 @@
 apply plugin: 'com.android.model.application'
 
-def ndkBuild = '/home/spykid/Android/Ndk/ndk-build'
+def ndkBuild   = '/home/cuong/Android/Ndk/ndk-build'
+def libpcapDir = '/home/cuong/Android/Ndk/external/libpcap/'
 
 task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
     commandLine "$ndkBuild", '-C', file('src/main').absolutePath
@@ -54,10 +55,10 @@ model {
 
         cppFlags += "-std=c++11"
 
+        cppFlags += "-I${file("$libpcapDir")}".toString()
         cppFlags += "-I${file("src/main/prebuilt/libfluid_msg/")}".toString()
         cppFlags += "-I${file("src/main/prebuilt/libfluid_base/")}".toString()
         cppFlags += "-I${file("src/main/prebuilt/libevent/include/")}".toString()
-        cppFlags += "-I${file("/home/spykid/Android/Ndk/external/libpcap/")}".toString()
 
         ldLibs += "log"
     }
