@@ -14,22 +14,14 @@ tasks.clean.dependsOn cleanNative
 
 tasks.buildNative.doLast {
     copy {
-        from('src/main/libs/armeabi/') {
-            exclude '*.so'
+        from('src/main/libs/') {
+            exclude '**/*.so'
         }
-        into('src/main/libs/armeabi/')
-        rename("ofswitch", "libofswitch.so")
+        into('src/main/libs/')
+        rename('(.+)', 'lib$1.so')
     }
 
-    copy {
-        from('src/main/libs/armeabi-v7a/') {
-            exclude '*.so'
-        }
-        into('src/main/libs/armeabi-v7a/')
-        rename("ofswitch", "libofswitch.so")
-    }
-
-    delete files('src/main/libs/armeabi/ofswitch', 'src/main/libs/armeabi-v7a/ofswitch')
+    delete fileTree('src/main/libs/').exclude('**/*.so')
 }
 
 tasks.all {

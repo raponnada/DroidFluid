@@ -1,7 +1,7 @@
 #include <pcap.h>
 #include "switch/Switch.hh"
 
-int main( int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     std::vector<std::string> ports;
     ports.push_back("wlan0");
