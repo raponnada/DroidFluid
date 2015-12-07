@@ -1,12 +1,10 @@
 #!/bin/sh
 
 # Copy the extracted packages to folders named like these to make it easier
-#$LIBPCAP_DIR=libpcap              # libpcap
 LIBEVENT_DIR=libevent             # libevent
 LIBFLUID_BASE_DIR=libfluid_base   # libfluid_base
 LIBFLUID_MSG_DIR=libfluid_msg     # libfluid_base
 NDK_ROOT=~/Android/Ndk            # Path to the Android NDK root
-#LIBSSL_DIR=libssl                # OpenSSL
 
 openlib() {
     if [ ! -d "$2" ]; then
@@ -26,26 +24,6 @@ checkerror() {
 
 export PATH=$PATH:$NDK_ROOT/toolchains/arm-linux-androideabi-4.8/prebuilt/linux-x86/bin
 export PATH=$PATH:$NDK_ROOT/toolchains/arm-linux-androideabi-4.8/prebuilt/linux-x86/include
-
-#openlib "libssl" $LIBSSL_DIR
-#export CC="arm-linux-androideabi-gcc --sysroot=$NDK_ROOT/platforms/android-8/arch-arm/"
-#./Configure android-armv7 no-asm shared
-#checkerror "libssl"
-#make
-#checkerror "libssl"
-#cd -
-
-#openlib "libpcap" $LIBPCAP_DIR
-#./configure --host=arm-linux-androideabi \
-#            --with-pcap=linux \
-#            CC=arm-linux-androideabi-gcc \
-#            LD=arm-linux-androideabi-ld \
-#            CFLAGS="--sysroot=$NDK_ROOT/platforms/android-21/arch-arm/" \
-#            LDFLAGS="-L$NDK_ROOT/platforms/android-21/arch-arm/usr/lib/"
-#checkerror "libpcap"
-#make
-#checkerror "libpcap"
-#cd -
 
 openlib "libevent" $LIBEVENT_DIR
 ./configure --host=arm-linux-androideabi \

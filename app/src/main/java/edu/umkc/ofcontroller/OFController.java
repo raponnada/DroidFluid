@@ -3,7 +3,9 @@ package edu.umkc.ofcontroller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +46,7 @@ public class OFController extends Activity
 		public void run() {
 			updateSwitchLog();
             updateControllerLog();
+
 			logUpdaterHandler.postDelayed(logUpdater, logUpdaterInterval);
 		}
 	};
@@ -53,6 +56,8 @@ public class OFController extends Activity
     {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ofcontroller);
+
+        leaderIp();
 
         try {
 
@@ -81,7 +86,40 @@ public class OFController extends Activity
         }
     }
 
-	void updateSwitchLog()
+    public void leaderIp() {
+        (new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final DatagramSocket serverSocket = new DatagramSocket(9000);
+                    byte[] receiveData = new byte[1024];
+                    byte[] sendData = new byte[1024];
+
+                    while(true) {
+                        final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                        Log.i("DroidFluid", "WAITING...");
+                        serverSocket.receive(receivePacket);
+
+                        final String sentence = new String(receivePacket.getData());
+                        Log.i("DroidFluid", "RECEIVED: " + sentence);
+
+                        final int port = receivePacket.getPort();
+                        final InetAddress IPAddress = receivePacket.getAddress();
+
+                        sendData = "127.0.0.1".getBytes();
+
+                        final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+                        serverSocket.send(sendPacket);
+                    }
+                }
+                catch (Exception e) {
+                    Log.i("DroidFluid", "Error: " + e.getMessage());
+                }
+            }
+        })).start();
+    }
+
+    void updateSwitchLog()
     {
         try {
 			final StringBuilder log = new StringBuilder();
