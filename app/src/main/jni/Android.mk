@@ -34,6 +34,13 @@ LOCAL_CFLAGS += -std=c++11
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE    := arpscan
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_SRC_FILES := ArpScan.cc
+LOCAL_STATIC_LIBRARIES := libevent_pthreads
+include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE    := ofswitch
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_SRC_FILES := AndroidSwitch.cc \

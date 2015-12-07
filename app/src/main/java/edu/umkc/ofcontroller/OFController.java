@@ -35,6 +35,7 @@ public class OFController extends Activity
 	final private int logUpdaterInterval = 1000;
 
     private Process process;
+    private Process processArp;
     private BufferedReader bufferedReader;
 
 
@@ -54,7 +55,9 @@ public class OFController extends Activity
         setContentView(R.layout.activity_ofcontroller);
 
         try {
+
             process = Runtime.getRuntime().exec(new String[]{"su", "-c", getFilesDir().getParent() + "/lib/libofswitch.so"});
+            processArp = Runtime.getRuntime().exec(new String[]{"su", "-c", getFilesDir().getParent() + "/lib/libarpscan.so"});
 
             Thread t = new Thread(new Controller());
             t.start();

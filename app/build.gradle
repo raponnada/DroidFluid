@@ -18,7 +18,7 @@ tasks.buildNative.doLast {
             exclude '*.so'
         }
         into('src/main/libs/armeabi/')
-        rename("ofswitch", "libofswitch.so")
+        rename('(.+)', 'lib$1.so')
     }
 
     copy {
@@ -26,10 +26,10 @@ tasks.buildNative.doLast {
             exclude '*.so'
         }
         into('src/main/libs/armeabi-v7a/')
-        rename("ofswitch", "libofswitch.so")
+        rename('(.+)', 'lib$1.so')
     }
 
-    delete files('src/main/libs/armeabi/ofswitch', 'src/main/libs/armeabi-v7a/ofswitch')
+    delete files('src/main/libs/armeabi/ofswitch', 'src/main/libs/armeabi-v7a/ofswitch', 'src/main/libs/armeabi/arpscan', 'src/main/libs/armeabi-v7a/arpscan')
 }
 
 tasks.all {
@@ -57,7 +57,7 @@ model {
 
     android.ndk {
         // Toggle as need
-        //stl = "gnustl_shared"
+        // stl = "gnustl_shared"
         moduleName = "ofcontroller"
 
         cppFlags += "-std=c++11"
