@@ -103,16 +103,20 @@ void arp_gen(iFace inf)
     sprintf( net, "%s.%s.%s", a, b, c);
 
     //iterate over all arguments
-    for(i = 1; i <= 255; i++){
+    for(i = 2; i <= 254; i++){
+
+        if (i == atoi(d)){
+            continue;
+        }
         sprintf(toip,"%s.%i", net, i);
+        //fprintf(stdout, "ipaddress: %s\n", toip);
         inet_pton (AF_INET, toip, arp_header->dip);
         if(n = sendto(sockfd,&eth_frame, 64, 0, (struct sockaddr *) &device, sizeof(device)) <= 0){
             fprintf(stdout, "failed to send \n");
-            fprintf(stdout, "error Description : %s \n", strerror(errno));
+           // fprintf(stdout, "error Description : %s \n", strerror(errno));
             return;
         }
-        usleep(2 * 1000);
-
+        //usleep(2 * 1000);
         //fprintf(stdout, "Iterate over all arguments");
     }
     return;
@@ -197,16 +201,29 @@ void *arp_sniff(void *)
     char ip_addrs[16];
     struct sockaddr from;
     int iterate = 0;
+
+    fp = fopen("/sdcard/Dfluid/devices.txt","w");
     arp_rply = (struct arp_hdr *)((struct packet*)(buffer+14));
     sprintf(mac,"%02x:%02x:%02x:%02x:%02x:%02x",
                     iface->mac[0], iface->mac[1],
                     iface->mac[2], iface->mac[3],
                     iface->mac[4], iface->mac[5]);
     fprintf(fp, "%s %s\n",iface->ip, mac);
+    struct timeval tv;
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
 
-    while(iterate < 7){
+    while(iterate < 5){
+
+        if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof tv))
+        { perror("setsockopt"); }
 
         r = recv(sockfd, buffer, sizeof(buffer), 0);
+        if (r < 0) {
+            iterate++;
+            continue;
+        }
+
         if(((((buffer[12])<<8)+buffer[13])!=ETH_P_ARP) && ntohs(arp_rply->op)!=2)
             continue;
         sprintf (ip_addrs, "%u.%u.%u.%u",arp_rply->sip[0], arp_rply->sip[1],
@@ -222,6 +239,8 @@ void *arp_sniff(void *)
         }
         iterate++;
     }
+
+    fclose(fp);
     close(sockfd);
     exit(0);
 }
@@ -248,19 +267,19 @@ int main(int argc, char* argv[])
     if(pollWlan() < 0){
         fprintf(stdout,"wlan interface poll failed\n");
         return -1;
+
     }
-    close(sockfd);
 
     if ((sockfd = socket (PF_PACKET, SOCK_RAW, htons (ETH_P_ALL))) < 0) {
         fprintf (stdout,"socket() failed\n ");
         return -1;
     }
-    fp = fopen("/data/data/edu.umkc.droidfluid/lib/devices.txt","w");
+
     p = pthread_create(&pt2, NULL, &inject_arp, NULL);
     s = pthread_create(&pt1, NULL, &arp_sniff, NULL);
 
     pthread_join(pt1,NULL);
-    fclose(fp);
-    close(sockfd);
+
+    //close(sockfd);
     return 0;
 }
